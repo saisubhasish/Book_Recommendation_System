@@ -50,10 +50,13 @@ class DataValidationConfig:
         try:
             self.data_validation_dir = os.path.join(training_pipeline_config.artifact_dir , "data_validation")
             self.report_file_path=os.path.join(self.data_validation_dir, "report.yaml")
-            self.train_file_path = os.path.join(self.data_validation_dir,"dataset",TRAIN_FILE_NAME)
-            self.test_file_path = os.path.join(self.data_validation_dir,"dataset",TEST_FILE_NAME)
+            self.books_file_path = os.path.join(self.data_validation_dir,"dataset",BOOKS_FILE_NAME)
+            self.users_file_path = os.path.join(self.data_validation_dir,"dataset",USERS_FILE_NAME)
+            self.ratings_file_path = os.path.join(self.data_validation_dir,"dataset",RATINGS_FILE_NAME)
             self.missing_threshold:float = 0.2
-            self.base_file_path = os.path.join("hypothyroid.csv")
+            self.books_base_file_path = os.path.join("books.csv")
+            self.users_base_file_path = os.path.join("users.csv")
+            self.ratings_base_file_path = os.path.join("ratings.csv")
 
         except Exception as e:
             raise BookRecommenderException(e, sys)

@@ -6,10 +6,10 @@ from xgboost import XGBClassifier
 from sklearn.metrics import f1_score
 from sklearn.model_selection import GridSearchCV
 
-from thyroid import utils
-from thyroid.logger import logging
-from thyroid.exception import ThyroidException
-from thyroid.entity import artifact_entity,config_entity
+from bookRecommender import utils
+from bookRecommender.logger import logging
+from bookRecommender.exception import ThyroidException
+from bookRecommender.entity import artifact_entity,config_entity
 
 
 class ModelTrainer:

@@ -1,12 +1,11 @@
 import os,sys 
 import numpy as np
 import pandas as pd
-from thyroid import utils
+from bookRecommender import utils
 from typing import Optional
-from thyroid.logger import logging
-from thyroid.config import TARGET_COLUMN
-from thyroid.exception import ThyroidException
-from thyroid.entity import artifact_entity,config_entity
+from bookRecommender.logger import logging
+from bookRecommender.exception import BookRecommenderException
+from bookRecommender.entity import artifact_entity,config_entity
 
 
 
@@ -22,7 +21,7 @@ class DataValidation:
             self.data_ingestion_artifact=data_ingestion_artifact
             self.validation_error=dict()
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
     
 
@@ -51,26 +50,7 @@ class DataValidation:
                 return None
             return df
         except Exception as e:
-            raise ThyroidException(e, sys)
-
-    def drop_unnecessary_columns(self, df:pd.DataFrame, report_key_name:str)->Optional[pd.DataFrame]:
-        """
-        This function will drop unnecessary columns from dataframe
-        
-        df : Accepts a pandas dataframe
-        =========================================================================================
-        returns Pandas Dataframe by dropping 'TSH measured', 'T3 measured', 'TT4 measured', 'T4U measured', 'FTI measured', 'TBG measured', 'referral source', 'query on thyroxine'
-        """
-        try:
-            drop_columns = ['TSH measured', 'T3 measured', 'TT4 measured', 'T4U measured', 'FTI measured', 'TBG measured', 'referral source', 'query on thyroxine']
-            logging.info(f"UnnecessaColumns dropped: {drop_columns}")
-            self.validation_error[report_key_name] = drop_columns
-            drop_columns = df[drop_columns]
-            df.drop(columns=drop_columns, axis=1, inplace=True)
-            return df
-            
-        except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
     def is_required_columns_exists(self,base_df:pd.DataFrame,current_df:pd.DataFrame,report_key_name:str)->bool:
         """
@@ -94,7 +74,7 @@ class DataValidation:
             return True
             
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
     def data_drift(self,base_df:pd.DataFrame,current_df:pd.DataFrame,report_key_name:str):
         try:
@@ -123,66 +103,73 @@ class DataValidation:
             self.validation_error[report_key_name]=drift_report
             
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
     def initiate_data_validation(self)->artifact_entity.DataValidationArtifact:
         try:
             logging.info("Reading base dataframe")
-            base_df = pd.read_csv(self.data_validation_config.base_file_path)
-            base_df.replace({"?":np.NAN},inplace=True)
-            logging.info("Replace ? value in base df")
-            #base_df has ? as null
+            books_base_df = pd.read_csv(self.data_validation_config.books_base_file_path, sep=';', encoding='latin-1', error_bad_lines = False)
+            users_base_df = pd.read_csv(self.data_validation_config.users_base_file_path, sep=';', encoding='latin-1', error_bad_lines = False)
+            ratings_base_df = pd.read_csv(self.data_validation_config.ratings_base_file_path, sep=';', encoding='latin-1', error_bad_lines = False)
+
             logging.info("Drop null values colums from base df")
-            base_df=self.drop_missing_values_columns(df=base_df,report_key_name="missing_values_within_base_dataset")
+            books_base_df=self.drop_missing_values_columns(df=books_base_df,report_key_name="missing_values_within_books_base_dataset")
+            users_base_df=self.drop_missing_values_columns(df=users_base_df,report_key_name="missing_values_within_users_base_dataset")
+            ratings_base_df=self.drop_missing_values_columns(df=ratings_base_df,report_key_name="missing_values_within_ratings_base_dataset")
 
-            logging.info("Reading train dataframe")
-            train_df = pd.read_csv(self.data_ingestion_artifact.train_file_path)
-            logging.info("Reading test dataframe")
-            test_df = pd.read_csv(self.data_ingestion_artifact.test_file_path)
+            logging.info("Reading books dataframe")
+            books_df = pd.read_csv(self.data_ingestion_artifact.books_file_path)
+            logging.info("Reading users dataframe")
+            users_df = pd.read_csv(self.data_ingestion_artifact.users_file_path)
+            logging.info("Reading ratings dataframe")
+            ratings_df = pd.read_csv(self.data_ingestion_artifact.ratings_file_path)
 
-            logging.info("Drop null values colums from train df")
-            train_df = self.drop_missing_values_columns(df=train_df,report_key_name="missing_values_within_train_dataset")
-            logging.info("Drop null values colums from test df")
-            test_df = self.drop_missing_values_columns(df=test_df,report_key_name="missing_values_within_test_dataset")
-
-            logging.info("Drop unnecessary columns from base df")
-            base_df = self.drop_unnecessary_columns(df=base_df, report_key_name="dropping_unnecessary_columns_base_df")
-            logging.info("Drop unnecessary columns from train df")
-            train_df = self.drop_unnecessary_columns(df=train_df, report_key_name="dropping_unnecessary_columns_train_df")
-            logging.info("Drop unnecessary columns from test df")
-            test_df = self.drop_unnecessary_columns(df=test_df, report_key_name="dropping_unnecessary_columns_test_df")
+            logging.info("Drop null values colums from books df")
+            books_df = self.drop_missing_values_columns(df=books_df,report_key_name="missing_values_within_train_dataset")
+            logging.info("Drop null values colums from users df")
+            users_df = self.drop_missing_values_columns(df=users_df,report_key_name="missing_values_within_test_dataset")
+            logging.info("Drop null values colums from ratings df")
+            ratings_df = self.drop_missing_values_columns(df=ratings_df,report_key_name="missing_values_within_test_dataset")
 
             logging.info("Is all required columns present in train df")
-            train_df_columns_status = self.is_required_columns_exists(base_df=base_df, current_df=train_df,report_key_name="missing_columns_within_train_dataset")
+            books_df_columns_status = self.is_required_columns_exists(base_df=books_base_df, current_df=books_df,report_key_name="missing_columns_within_books_dataset")
             logging.info("Is all required columns present in test df")
-            test_df_columns_status = self.is_required_columns_exists(base_df=base_df, current_df=test_df,report_key_name="missing_columns_within_test_dataset")
+            users_df_columns_status = self.is_required_columns_exists(base_df=users_base_df, current_df=users_df,report_key_name="missing_columns_within_users_dataset")
+            logging.info("Is all required columns present in test df")
+            ratings_df_columns_status = self.is_required_columns_exists(base_df=ratings_base_df, current_df=ratings_df,report_key_name="missing_columns_within_ratings_dataset")
 
-            if train_df_columns_status:     # If True
-                logging.info("As all column are available in train df hence detecting data drift in train dataframe")
-                self.data_drift(base_df=base_df, current_df=train_df,report_key_name="data_drift_within_train_dataset")
-            if test_df_columns_status:     # If True
-                logging.info("As all column are available in test df hence detecting data drift test dataframe")
-                self.data_drift(base_df=base_df, current_df=test_df,report_key_name="data_drift_within_test_dataset")
+            if books_df_columns_status:     # If True
+                logging.info("As all column are available in books df hence detecting data drift in books dataframe")
+                self.data_drift(base_df=books_base_df, current_df=books_df,report_key_name="data_drift_within_books_dataset")
+            if users_df_columns_status:     # If True
+                logging.info("As all column are available in users df hence detecting data drift users dataframe")
+                self.data_drift(base_df=users_base_df, current_df=users_df,report_key_name="data_drift_within_users_dataset")
+            if ratings_df_columns_status:     # If True
+                logging.info("As all column are available in ratings df hence detecting data drift ratings dataframe")
+                self.data_drift(base_df=ratings_base_df, current_df=ratings_df,report_key_name="data_drift_within_ratings_dataset")
+
 
             logging.info("create dataset directory folder if not available for validated train file and test file")
             # Create dataset directory folder if not available
-            dataset_dir = os.path.dirname(self.data_validation_config.train_file_path)
+            dataset_dir = os.path.dirname(self.data_validation_config.books_file_path)
             os.makedirs(dataset_dir,exist_ok=True)
 
             logging.info("Saving validated train df and test df to dataset folder")
             # Saving validated train df and test df to dataset folder
-            train_df.to_csv(path_or_buf=self.data_validation_config.train_file_path,index=False,header=True)
-            test_df.to_csv(path_or_buf=self.data_validation_config.test_file_path,index=False,header=True)
-            
+            books_df.to_csv(path_or_buf=self.data_validation_config.books_file_path,index=False,header=True)
+            users_df.to_csv(path_or_buf=self.data_validation_config.users_file_path,index=False,header=True)
+            ratings_df.to_csv(path_or_buf=self.data_validation_config.ratings_file_path,index=False,header=True)    
+
             # Write the report
             logging.info("Writing report in yaml file")
             utils.write_yaml_file(file_path=self.data_validation_config.report_file_path,
             data=self.validation_error)   # valiadtion_error: drop columns, missing columns, drift report
 
             data_validation_artifact = artifact_entity.DataValidationArtifact(report_file_path=self.data_validation_config.report_file_path, 
-            train_file_path=self.data_validation_config.train_file_path, test_file_path=self.data_validation_config.test_file_path)
+            books_file_path=self.data_validation_config.books_file_path, users_file_path=self.data_validation_config.users_file_path, 
+            ratings_file_path=self.data_validation_config.ratings_file_path)
             logging.info(f"Data validation artifact: {data_validation_artifact}")
             return data_validation_artifact
 
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)

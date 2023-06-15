@@ -3,15 +3,15 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-from thyroid import utils
-from thyroid.logger import logging
-from thyroid.utils import load_object
-from thyroid.config import TARGET_COLUMN
-from thyroid.entity import config_entity
-from thyroid.predictor import ModelResolver
-from thyroid.exception import ThyroidException
-from thyroid.components.data_validation import DataValidation
-from thyroid.entity.config_entity import DataValidationConfig
+from bookRecommender import utils
+from bookRecommender.logger import logging
+from bookRecommender.utils import load_object
+from bookRecommender.config import TARGET_COLUMN
+from bookRecommender.entity import config_entity
+from bookRecommender.predictor import ModelResolver
+from bookRecommender.exception import ThyroidException
+from bookRecommender.components.data_validation import DataValidation
+from bookRecommender.entity.config_entity import DataValidationConfig
 
 
 PREDICTION_DIR= "prediction"

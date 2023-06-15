@@ -1,10 +1,10 @@
 import os, sys
-from thyroid.logger import logging
-from thyroid.exception import ThyroidException
-from thyroid.predictor import ModelResolver
-from thyroid.entity.config_entity import ModelPusherConfig
-from thyroid.utils import save_object, load_object
-from thyroid.entity.artifact_entity import DataTransformationArtifact, ModelTrainerArtifact, ModelPusherArtifact
+from bookRecommender.logger import logging
+from bookRecommender.exception import ThyroidException
+from bookRecommender.predictor import ModelResolver
+from bookRecommender.entity.config_entity import ModelPusherConfig
+from bookRecommender.utils import save_object, load_object
+from bookRecommender.entity.artifact_entity import DataTransformationArtifact, ModelTrainerArtifact, ModelPusherArtifact
 
 class ModelPusher:
 

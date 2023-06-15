@@ -4,14 +4,14 @@ import numpy as np
 
 from sklearn.metrics import f1_score
 
-from thyroid import utils
-from thyroid.logger import logging
-from thyroid.utils import load_object
-from thyroid.config import TARGET_COLUMN
-from thyroid.predictor import ModelResolver
-from thyroid.exception import ThyroidException
-from thyroid.entity import config_entity, artifact_entity
-from thyroid.components.data_transformation import DataTransformation
+from bookRecommender import utils
+from bookRecommender.logger import logging
+from bookRecommender.utils import load_object
+from bookRecommender.config import TARGET_COLUMN
+from bookRecommender.predictor import ModelResolver
+from bookRecommender.exception import ThyroidException
+from bookRecommender.entity import config_entity, artifact_entity
+from bookRecommender.components.data_transformation import DataTransformation
  
 
 class ModelEvaluation:
