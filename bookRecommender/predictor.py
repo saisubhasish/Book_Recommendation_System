@@ -38,7 +38,7 @@ class ModelResolver:
             latest_dir_name = max(dir_names)
             return os.path.join(self.model_registry,f"{latest_dir_name}")
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
     def get_latest_model_path(self):
         """
@@ -51,7 +51,7 @@ class ModelResolver:
                 raise Exception(f"Model is not available")
             return os.path.join(latest_dir,self.model_dir_name,MODEL_FILE_NAME)
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
 
     def get_latest_target_encoder_path(self):
@@ -65,7 +65,7 @@ class ModelResolver:
                 raise Exception(f"Target encoder is not available")
             return os.path.join(latest_dir,self.target_encoder_dir_name,TARGET_ENCODER_OBJECT_FILE_NAME)
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
     def get_latest_knn_imputer_path(self):
         """
@@ -78,7 +78,7 @@ class ModelResolver:
                 raise Exception(f"KNN Imputer is not available")
             return os.path.join(latest_dir,self.knn_imputer_dir_name,KNN_IMPUTER_OBJECT_FILE_NAME)
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
 
     def get_latest_save_dir_path(self)->str:
@@ -93,7 +93,7 @@ class ModelResolver:
             latest_dir_num = int(os.path.basename(self.get_latest_dir_path()))
             return os.path.join(self.model_registry,f"{latest_dir_num+1}") # Otherwise creating a directory with a number addition
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
     def get_latest_save_model_path(self):
         """
@@ -103,7 +103,7 @@ class ModelResolver:
             latest_dir = self.get_latest_save_dir_path()
             return os.path.join(latest_dir,self.model_dir_name,MODEL_FILE_NAME)
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
 
     def get_latest_save_target_encoder_path(self):
@@ -114,7 +114,7 @@ class ModelResolver:
             latest_dir = self.get_latest_save_dir_path()
             return os.path.join(latest_dir,self.target_encoder_dir_name,TARGET_ENCODER_OBJECT_FILE_NAME)
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
     def get_latest_save_knn_imputer_path(self):
         """
@@ -125,7 +125,7 @@ class ModelResolver:
             return os.path.join(latest_dir,self.knn_imputer_dir_name,KNN_IMPUTER_OBJECT_FILE_NAME)
 
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
     def drop_missing_values_columns(self,df:pd.DataFrame,report_key_name:str)->Optional[pd.DataFrame]:
         """
@@ -151,7 +151,7 @@ class ModelResolver:
             return df
 
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
 
     def is_required_columns_exists(self,base_df:pd.DataFrame,current_df:pd.DataFrame,report_key_name:str)->bool:
@@ -176,7 +176,7 @@ class ModelResolver:
             return True
             
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
     def data_drift(self,base_df:pd.DataFrame,current_df:pd.DataFrame,report_key_name:str):
         try:
@@ -204,7 +204,7 @@ class ModelResolver:
             return validation_error
             
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
     def feature_encoding(self,df:pd.DataFrame)->Optional[pd.DataFrame]:
         """
@@ -221,7 +221,7 @@ class ModelResolver:
             return df
 
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
     def handling_null_value_and_outliers(self,df:pd.DataFrame)->Optional[pd.DataFrame]:
         """
@@ -241,7 +241,7 @@ class ModelResolver:
             return df
 
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise BookRecommenderException(e, sys)
 
 
 

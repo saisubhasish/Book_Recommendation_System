@@ -30,4 +30,7 @@ class ModelEvaluationArtifact:
 @dataclass
 class ModelPusherArtifact:
     pusher_model_dir:str 
-    saved_model_dir:str
+    books_path:str
+    popular_df_path:str
+    pivot_table_path:str
+    similarity_score_model_path:str

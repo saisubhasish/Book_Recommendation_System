@@ -9,6 +9,11 @@ RATINGS_FILE_NAME = 'ratings.csv'
 POPULAR_FILE_NAME = "popular.csv"
 MODEL_FILE_NAME = "model.pkl"
 
+POPULAR_DF = 'popular.pkl'
+PT = 'pt.pkl'
+BOOKS = 'books.pkl'
+SIMILARITY_SCORE = 'similarity_scores.pkl'
+
 
 class TrainingPipelineConfig:
     def __init__(self):
@@ -91,9 +96,11 @@ class ModelPusherConfig:
             # Saving models outside of artifact dir to save model in each run
             self.saved_model_dir = os.path.join("saved_models")
             self.pusher_model_dir = os.path.join(self.model_pusher_dir,"saved_models")
-            self.pusher_model_path = os.path.join(self.pusher_model_dir,MODEL_FILE_NAME)
-            self.pusher_target_encoder_path = os.path.join(self.pusher_model_dir,TARGET_ENCODER_OBJECT_FILE_NAME)
-            self.knn_imputer_object_path = os.path.join(self.pusher_model_dir,KNN_IMPUTER_OBJECT_FILE_NAME)
+            self.books_path = os.path.join(self.pusher_model_dir, BOOKS)
+            self.popular_df_path = os.path.join(self.pusher_model_dir, POPULAR_DF)
+            self.pivot_table_path = os.path.join(self.pusher_model_dir, PT)
+            self.similarity_score_model_path = os.path.join(self.pusher_model_dir,SIMILARITY_SCORE)
+
 
         except Exception as e:
             raise BookRecommenderException(e, sys)
