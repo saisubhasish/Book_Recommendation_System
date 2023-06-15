@@ -66,7 +66,7 @@ class DataTransformation:
             logging.info("Merging dataframe on top of 'Book-Title ' to get required columns")
             popular_df = popular_df.merge(books_df, on='Book-Title').drop_duplicates('Book-Title')[['Book-Title', 'Book-Author', 'Image-URL-M', 'num_ratings', 'avg_rating']]
 
-            # Colaberative filtering Based Recommended Syatem
+            # Colaberative filtering Based Recommended System
             logging.info("Colaberative filtering Based Recommended Syatem")
 
             # Users rated more than 200 books
@@ -87,7 +87,7 @@ class DataTransformation:
             famous_books = y[y].index
 
             # Getting final dataframe
-            logging.info("Getting final datafrane")
+            logging.info("Getting final dataframe")
             final_ratings = filtered_rating[filtered_rating['Book-Title'].isin(famous_books)]
 
             # Getting final table, with user with 200 or more votes and books with more than 50 votes
@@ -101,11 +101,11 @@ class DataTransformation:
             print(f"Shape of the data: {pt.shape}")
 
             # Save numpy array
-            utils.save_numpy_array_data(file_path=self.data_transformation_config.transformed_file_path, array=pt)
+            utils.save_numpy_array_data(file_path=self.data_transformation_config.transformed_pivot_table_file_path, array=pt)
 
             # Preparing Artifact
             data_transformation_artifact = artifact_entity.DataTransformationArtifact(
-                transformed_file_path = self.data_transformation_config.transformed_file_path)
+                transformed_pivot_table_file_path = self.data_transformation_config.transformed_pivot_table_file_path)
 
             logging.info(f"Data transformation object {data_transformation_artifact}")
             return data_transformation_artifact

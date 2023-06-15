@@ -6,3 +6,4 @@ pymongo
 python-dotenv
 PyYAML
 dill
+scikit-learn
