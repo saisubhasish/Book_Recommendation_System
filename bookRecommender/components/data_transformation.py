@@ -96,16 +96,29 @@ class DataTransformation:
             pt = final_ratings.pivot_table(index='Book-Title', columns='User-ID', values='Book-Rating')
             
             # Filling NAN value with 0
+            logging.info("Filling NAN value with 0")
             pt.fillna(0, inplace=True)
             logging.info(f"Shape of the data: {pt.shape}")
             print(f"Shape of the data: {pt.shape}")
 
+            logging.info("Create popular folder if not available")
+            #Create popular folder if not available
+            popular_file_dir = os.path.dirname(self.data_transformation_config.popular_data_file_path)
+            os.makedirs(popular_file_dir,exist_ok=True)
+
+            logging.info("save popular dataframe")
+            # save popular dataframe
+            popular_df.to_csv(path_or_buf=self.data_transformation_config.popular_data_file_path, index=False, header=True)
+
             # Save numpy array
+            logging.info("Save numpy array")
             utils.save_numpy_array_data(file_path=self.data_transformation_config.transformed_pivot_table_file_path, array=pt)
 
             # Preparing Artifact
+            logging.info("Preparing Artifact")
             data_transformation_artifact = artifact_entity.DataTransformationArtifact(
-                transformed_pivot_table_file_path = self.data_transformation_config.transformed_pivot_table_file_path)
+                transformed_pivot_table_file_path = self.data_transformation_config.transformed_pivot_table_file_path,
+                popular_data_file_path=self.data_transformation_config.popular_data_file_path)
 
             logging.info(f"Data transformation object {data_transformation_artifact}")
             return data_transformation_artifact

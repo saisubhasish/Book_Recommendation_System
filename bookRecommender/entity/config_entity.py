@@ -6,8 +6,7 @@ from bookRecommender.exception import BookRecommenderException
 BOOKS_FILE_NAME = 'book.csv'
 USERS_FILE_NAME = 'user.csv'
 RATINGS_FILE_NAME = 'ratings.csv'
-KNN_IMPUTER_OBJECT_FILE_NAME = "knn_imputer.pkl"
-TARGET_ENCODER_OBJECT_FILE_NAME = "target_encoder.pkl"
+POPULAR_FILE_NAME = "popular.csv"
 MODEL_FILE_NAME = "model.pkl"
 
 
@@ -66,6 +65,7 @@ class DataTransformationConfig:
         try:
             self.data_transformation_dir = os.path.join(training_pipeline_config.artifact_dir , "data_transformation")
             self.transformed_pivot_table_file_path =  os.path.join(self.data_transformation_dir,"transformed",BOOKS_FILE_NAME.replace("csv","npz"))
+            self.popular_data_file_path = os.path.join(self.data_transformation_dir,"transformed",POPULAR_FILE_NAME)
 
         except Exception as e:
             raise BookRecommenderException(e, sys)

@@ -16,6 +16,7 @@ class DataValidationArtifact:
 @dataclass
 class DataTransformationArtifact:
     transformed_pivot_table_file_path:str
+    popular_data_file_path:str
 
 @dataclass
 class ModelTrainerArtifact:
