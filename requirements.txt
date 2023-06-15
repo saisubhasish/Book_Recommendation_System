@@ -2,3 +2,7 @@ flask
 numpy
 pandas==1.3.4
 gunicorn
+pymongo
+python-dotenv
+PyYAML
+dill
