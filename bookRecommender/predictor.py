@@ -1,7 +1,7 @@
 import os, sys
 import pandas as pd
 import numpy as np
-from bookRecommender.entity.config_entity import TARGET_ENCODER_OBJECT_FILE_NAME, MODEL_FILE_NAME, KNN_IMPUTER_OBJECT_FILE_NAME
+from bookRecommender.entity.config_entity import MODEL_FILE_NAME
 from typing import Optional
 from bookRecommender.exception import BookRecommenderException
 

@@ -4,7 +4,6 @@ import numpy as np
 
 from bookRecommender import utils
 from bookRecommender.logger import logging
-from bookRecommender.utils import load_object
 from bookRecommender.predictor import ModelResolver
 from bookRecommender.exception import BookRecommenderException
 from bookRecommender.entity import config_entity, artifact_entity
@@ -44,6 +43,7 @@ class ModelEvaluation:
                 model_eval_artifact = artifact_entity.ModelEvaluationArtifact(is_model_accepted=True,
                 improved_accuracy=None)                                           
                 logging.info(f"Model evaluation artifact: {model_eval_artifact}")
+                print(f"Model eval artifact: {model_eval_artifact}")
                 return model_eval_artifact
 
             logging.info(f"Accepting the current model")
@@ -52,6 +52,7 @@ class ModelEvaluation:
             
             # Improved accuracy
             logging.info(f"Model eval artifact: {model_eval_artifact}")
+            print(f"Model eval artifact: {model_eval_artifact}")
             return model_eval_artifact
             
         except Exception as e:
