@@ -12,7 +12,6 @@ MODEL_FILE_NAME = "model.pkl"
 POPULAR_DF = 'popular.pkl'
 PT = 'pt.pkl'
 BOOKS = 'books.pkl'
-SIMILARITY_SCORE = 'similarity_scores.pkl'
 
 
 class TrainingPipelineConfig:
@@ -99,7 +98,7 @@ class ModelPusherConfig:
             self.books_path = os.path.join(self.pusher_model_dir, BOOKS)
             self.popular_df_path = os.path.join(self.pusher_model_dir, POPULAR_DF)
             self.pivot_table_path = os.path.join(self.pusher_model_dir, PT)
-            self.similarity_score_model_path = os.path.join(self.pusher_model_dir,SIMILARITY_SCORE)
+            self.similarity_score_model_path = os.path.join(self.pusher_model_dir, MODEL_FILE_NAME)
 
 
         except Exception as e:

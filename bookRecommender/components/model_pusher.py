@@ -28,32 +28,34 @@ class ModelPusher:
         try:
             # Load object 
             logging.info("Loading model and files")
-            model = load_object(file_path=self.model_trainer_artifact.model_path)
+            similarity_score = load_object(file_path=self.model_trainer_artifact.model_path)
             books_file = self.data_ingestion_artifact.books_file_path
             books_df = pd.read_csv(books_file)
             popular_file = self.data_transformation_artifact.popular_data_file_path
             popular_df = pd.read_csv(popular_file)
             pivot_table = self.data_transformation_artifact.transformed_pivot_table_file_path
             pt = load_numpy_array_data(pivot_table)
-            similarity_score = load_object(file_path=self.model_trainer_artifact.model_path)
 
             # Model pusher dir
             logging.info("Saving model into model pusher directory")
-            save_object(file_path= self.model_pusher_config.pusher_model_path, obj=model)
-            save_object(file_path=self.model_pusher_config.knn_imputer_object_path, obj=knn_imputer)
-            save_object(file_path=self.model_pusher_config.pusher_target_encoder_path, obj=target_encoder)
+            save_object(file_path=self.model_pusher_config.books_path, obj=books_df)
+            save_object(file_path=self.model_pusher_config.popular_df_path, obj=popular_df)
+            save_object(file_path=self.model_pusher_config.pivot_table_path, obj=pt)
+            save_object(file_path= self.model_pusher_config.similarity_score_model_path, obj=similarity_score)
 
             # Getting or fetching the directory location to save latest model in different directory in each run
             logging.info("Saving model in saved model dir")
             model_path = self.model_resolver.get_latest_save_model_path()
-            knn_imputer_path = self.model_resolver.get_latest_save_knn_imputer_path()
-            target_encoder_path = self.model_resolver.get_latest_save_target_encoder_path()
+            books_df_path = self.model_resolver.get_latest_save_books_file_path()
+            popular_df_path = self.model_resolver.get_latest_save_popular_df_path()
+            pivot_table_path = self.model_resolver.get_latest_save_pivot_table_path()
 
             # Saved model dir outside artifact to use in prediction pipeline
             logging.info('Saving model outside of artifact directory')
-            save_object(file_path=model_path, obj=model)
-            save_object(file_path=knn_imputer_path, obj=knn_imputer)
-            save_object(file_path=target_encoder_path, obj=target_encoder)
+            save_object(file_path=model_path, obj=similarity_score)
+            save_object(file_path=books_df_path, obj=books_df)
+            save_object(file_path=popular_df_path, obj=popular_df)
+            save_object(file_path=pivot_table_path, obj=pt)
 
             model_pusher_artifact = ModelPusherArtifact(pusher_model_dir=self.model_pusher_config.pusher_model_dir, 
                                                         saved_model_dir=self.model_pusher_config.saved_model_dir)

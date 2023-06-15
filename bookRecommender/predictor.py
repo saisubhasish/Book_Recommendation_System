@@ -1,7 +1,7 @@
 import os, sys
 import pandas as pd
 import numpy as np
-from bookRecommender.entity.config_entity import MODEL_FILE_NAME
+from bookRecommender.entity.config_entity import MODEL_FILE_NAME, BOOKS, POPULAR_DF, PT
 from typing import Optional
 from bookRecommender.exception import BookRecommenderException
 
@@ -54,7 +54,7 @@ class ModelResolver:
             raise BookRecommenderException(e, sys)
 
 
-    def get_latest_target_encoder_path(self):
+    def get_latest_books_df_path(self):
         """
         This function raise Exception if there is no Target Encoder present in saved models dir
         Otherwise returns the path of the latest Target Encoder present in saved_models directory
@@ -62,12 +62,12 @@ class ModelResolver:
         try:
             latest_dir = self.get_latest_dir_path()
             if latest_dir is None:
-                raise Exception(f"Target encoder is not available")
-            return os.path.join(latest_dir,self.target_encoder_dir_name,TARGET_ENCODER_OBJECT_FILE_NAME)
+                raise Exception(f"Books file is not available")
+            return os.path.join(latest_dir,self.target_encoder_dir_name,BOOKS)
         except Exception as e:
             raise BookRecommenderException(e, sys)
 
-    def get_latest_knn_imputer_path(self):
+    def get_latest_popular_df_path(self):
         """
         This function raise Exception if there is no Transformer present in saved models dir
         Otherwise returns the path of the latest Transformer present in saved_models directory
@@ -75,8 +75,21 @@ class ModelResolver:
         try:
             latest_dir = self.get_latest_dir_path()
             if latest_dir is None:
-                raise Exception(f"KNN Imputer is not available")
-            return os.path.join(latest_dir,self.knn_imputer_dir_name,KNN_IMPUTER_OBJECT_FILE_NAME)
+                raise Exception(f"Popular file is not available")
+            return os.path.join(latest_dir,self.knn_imputer_dir_name,POPULAR_DF)
+        except Exception as e:
+            raise BookRecommenderException(e, sys)
+        
+    def get_latest_pivot_table_path(self):
+        """
+        This function raise Exception if there is no Transformer present in saved models dir
+        Otherwise returns the path of the latest Transformer present in saved_models directory
+        """
+        try:
+            latest_dir = self.get_latest_dir_path()
+            if latest_dir is None:
+                raise Exception(f"Pivot table file is not available")
+            return os.path.join(latest_dir,self.knn_imputer_dir_name,PT)
         except Exception as e:
             raise BookRecommenderException(e, sys)
 
@@ -106,146 +119,34 @@ class ModelResolver:
             raise BookRecommenderException(e, sys)
 
 
-    def get_latest_save_target_encoder_path(self):
+    def get_latest_save_books_file_path(self):
         """
-        This function extracts the latest saved_models directory and returns the path to save the latest Target Encoder
-        """
-        try:
-            latest_dir = self.get_latest_save_dir_path()
-            return os.path.join(latest_dir,self.target_encoder_dir_name,TARGET_ENCODER_OBJECT_FILE_NAME)
-        except Exception as e:
-            raise BookRecommenderException(e, sys)
-
-    def get_latest_save_knn_imputer_path(self):
-        """
-        This function extracts the latest saved_models directory and returns the path to save the latest KNN Imputer
+        This function extracts the latest saved_models directory and returns the path to save the latest books df
         """
         try:
             latest_dir = self.get_latest_save_dir_path()
-            return os.path.join(latest_dir,self.knn_imputer_dir_name,KNN_IMPUTER_OBJECT_FILE_NAME)
-
+            return os.path.join(latest_dir,self.target_encoder_dir_name,BOOKS)
         except Exception as e:
             raise BookRecommenderException(e, sys)
 
-    def drop_missing_values_columns(self,df:pd.DataFrame,report_key_name:str)->Optional[pd.DataFrame]:
+    def get_latest_save_popular_df_path(self):
         """
-        This function will drop column which contains missing value more than specified threshold
-        df : Accepts a pandas dataframe
-        =========================================================================================
-        returns Pandas Dataframe if atleast a single column is available after missing columns drop else None
+        This function extracts the latest saved_models directory and returns the path to save the latest popular df
         """
         try:
-            
-            threshold = missing_threshold
-            null_report = df.isna().sum()/df.shape[0]
-            # Selecting column name which contains null
-            drop_column_names = null_report[null_report>threshold].index
-
-            validation_error[report_key_name]=list(drop_column_names)
-            df.drop(list(drop_column_names),axis=1,inplace=True)
-
-            # Return None if no columns left
-            if len(df.columns)==0:
-                return None
-
-            return df
+            latest_dir = self.get_latest_save_dir_path()
+            return os.path.join(latest_dir,self.knn_imputer_dir_name,POPULAR_DF)
 
         except Exception as e:
             raise BookRecommenderException(e, sys)
-
-
-    def is_required_columns_exists(self,base_df:pd.DataFrame,current_df:pd.DataFrame,report_key_name:str)->bool:
+        
+    def get_latest_save_pivot_table_path(self):
         """
-        This function checks if required columns exists or not by comparing current df with base df and returns
-        output as True and False
+        This function extracts the latest saved_models directory and returns the path to save the latest pivot table file
         """
         try:
-            base_columns = base_df.columns
-            current_columns = current_df.columns
-
-            missing_columns = []
-            for base_column in base_columns:    
-                if base_column not in current_columns:
-                    missing_columns.append(base_column)
-
-            # Return False if there are missing columns in current df other wise True
-            if len(missing_columns)>0:
-                validation_error[report_key_name]=missing_columns
-                return False   
-
-            return True
-            
-        except Exception as e:
-            raise BookRecommenderException(e, sys)
-
-    def data_drift(self,base_df:pd.DataFrame,current_df:pd.DataFrame,report_key_name:str):
-        try:
-            drift_report=dict()
-
-            base_columns = base_df.columns
-            current_columns = current_df.columns
-
-            for base_column in base_columns:
-                base_data,current_data = base_df[base_column],current_df[base_column]
-                # Null hypothesis : Both column data has same distribution
-                
-                if base_df[base_column].dtype == current_df[base_column].dtype:
-                    drift_report[base_column] = {"Same data type": True}
-                else:
-                    drift_report[base_column] = {"Same data type": False}
-
-                if len(base_df[base_column].value_counts()) == len(current_df[base_column].value_counts()):
-                    drift_report[base_column] = {"Column has equal number of classes": True}
-                else:
-                    drift_report[base_column] = {"Column has equal number of classes": False} 
-
-            validation_error[report_key_name]=drift_report
-            
-            return validation_error
-            
-        except Exception as e:
-            raise BookRecommenderException(e, sys)
-
-    def feature_encoding(self,df:pd.DataFrame)->Optional[pd.DataFrame]:
-        """
-        This function will replace the categorical data of each column to numerical (Array type)
-
-        df : Accepts a pandas dataframe
-        =========================================================================================
-        returns Pandas Dataframe after converting to numerical value
-        """
-        try:
-            df = df.replace({'f':0, 't':1})
-
-            df['sex'] = df['sex'].replace({'F':0, 'M':1})
-            return df
+            latest_dir = self.get_latest_save_dir_path()
+            return os.path.join(latest_dir,self.knn_imputer_dir_name,PT)
 
         except Exception as e:
             raise BookRecommenderException(e, sys)
-
-    def handling_null_value_and_outliers(self,df:pd.DataFrame)->Optional[pd.DataFrame]:
-        """
-        This function will fill median in 'age' to handle outlier and null and mode in 'sex' column for null value
-
-        df : Accepts a pandas dataframe
-        ==========================================================================================================
-        returns Pandas Dataframe after filling the value
-        """
-        try:
-            median = df.loc[df['age']<=94, 'age'].median()
-            df.loc[df.age > 94, 'age'] = np.nan
-            df['age'].fillna(median,inplace=True)
-
-            df['sex'] = df['sex'].replace(np.nan, df['sex'].mode()[0])
-
-            return df
-
-        except Exception as e:
-            raise BookRecommenderException(e, sys)
-
-
-
-
-
-
-    
